@@ -1,0 +1,18 @@
+//
+// Print
+// --------------------------------------------------
+
+@media print {
+	#hive,
+	#main-container {
+		padding: 0 !important;
+	}
+
+	#page-header,
+	#page-footer,
+	#sidebar,
+	#side-overlay,
+	.block-options {
+		display: none !important;
+	}
+}
