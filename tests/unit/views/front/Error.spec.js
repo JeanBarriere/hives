@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { shallow } from '@vue/test-utils'
-import Error from '%/Front/Error'
+import Error from '%/front/Error'
 
 describe('Front - Error', () => {
   it('renders prop code correctly', () => {
