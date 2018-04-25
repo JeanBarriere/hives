@@ -47,7 +47,7 @@
             :href="authorUrl"
             class="font-w600"
             target="_blank"
-            v-text="authorName"/><i class="fa fa-2x fa-creative-commons ml-5"/><i class="fa fa-2x fa-heartbeat ml-5"/>
+            v-text="authorName"/><i class="fa fa-creative-commons ml-5"/>
         </div>
         <div class="float-left">
           <router-link

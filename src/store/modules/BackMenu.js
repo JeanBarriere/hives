@@ -26,7 +26,7 @@ const state = {
       left: true
     },
     {
-      name: 'Management',
+      name: 'Administration',
       head: true
     },
     {
@@ -37,6 +37,10 @@ const state = {
       icon: 'user',
       privateOnly: true,
       left: true
+    },
+    {
+      name: 'Management',
+      head: true
     },
     {
       name: 'Fleet',

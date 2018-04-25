@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 
 /*
  *  Document   : Hive.js based on Codebase.js by Pixelcave

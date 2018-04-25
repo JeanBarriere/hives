@@ -6,7 +6,7 @@ Vue.use(Router)
 
 const is = (type) => (new RegExp('www|api|hive|localhost:8080|localhost:5000')).test(window.location.host.split('.')[0]) === (type !== 'back')
 
-const load = name => resolve => require(['%/' + (is('front') ? 'Front/' : 'Back/') + (name || 'index')], resolve)
+const load = name => resolve => require(['%/' + (is('front') ? 'front/' : 'back/') + (name || 'index')], resolve)
 const frontRoutes = [
   {
     path: '/',
