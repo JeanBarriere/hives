@@ -21,9 +21,9 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
       - run: yarn install
       - save_cache:
-        key: v1-dependencies-{{ checksum "package.json" }}
-        paths:
-          - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+          paths:
+            - node_modules
   build:
     docker:
       - image: circleci/node:10-browsers
@@ -35,9 +35,9 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
       - run: yarn build
       - save_cache:
-        key: v1-dist-{{ .Environment.CIRCLE_SHA1 }}
-        paths:
-          - dist
+          key: v1-dist-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - dist
   test:
     docker:
       - image: circleci/node:10-browsers
