@@ -1,37 +1,63 @@
 version: 2
 jobs:
-  dependencies:
+  checkout_code:
     docker:
       - image: circleci/node:10-browsers
     working_directory: ~/hive
     steps:
       - checkout
+      - save_cache:
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/hive
+  dependencies:
+    docker:
+      - image: circleci/node:10-browsers
+    working_directory: ~/hive
+    steps:
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          - v1-dependencies-
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-dependencies-{{ checksum "package.json" }}
       - run: yarn install
       - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+        key: v1-dependencies-{{ checksum "package.json" }}
+        paths:
+          - node_modules
   build:
     docker:
       - image: circleci/node:10-browsers
     working_directory: ~/hive
     steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-dependencies-{{ checksum "package.json" }}
       - run: yarn build
+      - save_cache:
+        key: v1-dist-{{ .Environment.CIRCLE_SHA1 }}
+        paths:
+          - dist
   test:
     docker:
       - image: circleci/node:10-browsers
     working_directory: ~/hive
     steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-dependencies-{{ checksum "package.json" }}
       - run: yarn test
   deploy:
     docker:
       - image: circleci/node:10-browsers
     working_directory: ~/hive
     steps:
+      - restore_cache:
+          keys:
+            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dist-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Deploy to S3
           command: aws s3 sync dist s3://hives-front --delete
@@ -42,7 +68,10 @@ workflows:
   version: 2
   build-test-and-deploy:
     jobs:
+      - checkout_code
       - dependencies
+        requires:
+          - checkout_code
       - test:
           requires:
             - dependencies
