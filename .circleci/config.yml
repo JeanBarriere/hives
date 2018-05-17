@@ -19,14 +19,13 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
-          keys:
             - v1-dependencies-{{ checksum "package.json" }}
       - run: yarn install
       - save_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
           paths:
             - node_modules
+
   build:
     docker:
       - image: circleci/node:10-browsers
@@ -35,8 +34,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
-          keys:
             - v1-dependencies-{{ checksum "package.json" }}
       - run: yarn build
       - save_cache:
@@ -52,8 +49,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
-          keys:
             - v1-dependencies-{{ checksum "package.json" }}
       - run: yarn test
 
@@ -65,11 +60,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
-          keys:
             - v1-dependencies-{{ checksum "package.json" }}
-      - restore_cache:
-          keys:
             - v1-dist-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Deploy to S3
@@ -83,7 +74,7 @@ workflows:
   build-test-and-deploy:
     jobs:
       - checkout_code
-      - dependencies
+      - dependencies:
           requires:
           - checkout_code
       - test:
