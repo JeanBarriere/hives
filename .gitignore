@@ -2,6 +2,7 @@
 node_modules
 /dist
 /tests/coverage
+/config
 
 # local env files
 .env.local
