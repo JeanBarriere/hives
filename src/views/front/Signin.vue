@@ -9,31 +9,38 @@
         lg="6">
         <block
           ref="signin"
-          :options="[{ tag: 'button', icon: 'question', call: help }, { tag: 'button', icon: 'plus', call: newWorkspace }]"
+          :options="[{ tag: 'button', icon: 'question', call: help }]"
           bordered
           rounded
           header
           theme="primary">
           <template slot="header">Sign in to your workspace</template>
           <template slot="content">
-            <p>Enter your workspace's URL to access it:</p>
-            <div class="d-flex flex-row justify-content-end align-items-center mb-20 mt-10">
-              <label
-                class="sr-only"
-                for="workspace">Name</label>
-              <b-input
-                id="workspace"
-                v-model="workspace"
-                size="lg"
-                class="text-right mr-5"
-                placeholder="your-workspace" />
-              <span class="font-size-lg">.{{ hostname }}</span>
-            </div>
+            <p>Enter your workspace's name to access it:</p>
+            <b-form-group
+              label="Name:"
+              label-for="form-name">
+              <b-input-group :append="`.${hostname}`">
+                <b-form-input
+                  id="form-name"
+                  v-model.lazy="workspace"
+                  class="text-right"
+                  required
+                  placeholder="your-workspace"
+                  @change="checkWorkspace" />
+              </b-input-group>
+            </b-form-group>
             <div class="text-center mx-auto">
               <b-button
+                :disabled="btnLoad"
                 variant="alt-primary"
                 size="lg"
-                @click="redirect">Continue<i class="fa fa-arrow-right ml-15"/></b-button>
+                @click="redirect">
+                {{ btnLoad ? 'Searching...' : exists ? 'Continue' : 'Create' }}
+                <i
+                  :class="{ 'fa-spinner': btnLoad, 'fa-spin': btnLoad, 'fa-arrow-right': !btnLoad }"
+                  class="fa ml-15" />
+              </b-button>
             </div>
           </template>
         </block>
@@ -43,22 +50,37 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'FrontAuth',
   data: () => ({
-    workspace: '',
-    hostname: window.location.host
+    btnLoad: false,
+    exists: false,
+    hostname: window.location.host,
+    workspace: ''
   }),
   mounted: function () {
     this.$container.header({display: true, fixed: false, modern: false, inverse: false, glass: false})
   },
   methods: {
+    ...mapActions(['workspaceExists']),
     redirect: function () {
-      window.location.href = '//' + this.workspace + '.' + window.location.host + '/' + window.location.hash
+      if (!this.btnLoad && this.workspace.trim().length > 0) {
+        window.location.href = '//' + this.workspace + '.' + window.location.host + '/' + window.location.hash
+      }
     },
-    newWorkspace: function () {
-      console.log('TODO: redirect to new workspace')
-      this.$router.push('/signup')
+    checkWorkspace: function () {
+      if (!this.btnLoad) {
+        this.btnLoad = true
+        this.workspaceExists(this.workspace).then(() => {
+          this.exists = true
+          this.btnLoad = false
+        }).catch(() => {
+          this.exists = false
+          this.btnLoad = false
+        })
+      }
     },
     help: function () {
       console.log('TODO: help the user')

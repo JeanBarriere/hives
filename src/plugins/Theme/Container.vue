@@ -31,7 +31,11 @@
     <main
       id="main-container"
       ref="mainContainer">
-      <slot/>
+      <div
+        id="page-loader"
+        ref="pageLoader"
+        :class="{ show: mContent.load }" />
+      <slot v-if="!mContent.load" />
     </main>
     <h-footer
       v-if="mFooter.display"
@@ -75,7 +79,8 @@ export default {
     footerAuthorName: { type: String, default: '' },
     footerAuthorUrl: { type: String, default: '' },
     footerNavigation: { type: Boolean, default: false },
-    footerDisplay: { type: Boolean, default: false }
+    footerDisplay: { type: Boolean, default: false },
+    loadedOnMounted: { type: Boolean, default: false }
   },
   data: () => ({
     isMounted: false,
@@ -96,7 +101,7 @@ export default {
       display: false,
       fixed: false,
       logo: true,
-      mordern: false,
+      modern: false,
       inverse: false,
       glass: false,
       search: false,
@@ -104,7 +109,8 @@ export default {
     },
     mContent: {
       boxed: false,
-      narrow: false
+      narrow: false,
+      load: true
     },
     mFooter: {
       name: '',
@@ -140,9 +146,12 @@ export default {
     this.mFooter.display = this.footerDisplay
     Vue.prototype.$container = this
     this.isMounted = true
-    Vue.nextTick(() => {
+    this.$nextTick().then(() => {
       this.handleScroll()
       this.handleResize()
+      if (this.loadedOnMounted) {
+        this.contentLoad(false)
+      }
     })
   },
   created: function () {
@@ -194,6 +203,10 @@ export default {
     content: function ({boxed = null, narrow = null}) {
       this.mContent.boxed = typeof boxed === typeof true ? boxed : this.mContent.boxed
       this.mContent.narrow = typeof narrow === typeof true ? narrow : this.mContent.narrow
+      return this
+    },
+    contentLoad: function (load) {
+      this.mContent.load = load
       return this
     },
     footer: function (display, name = '', authorName = '', authorUrl = '', navigation = false) {

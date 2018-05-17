@@ -1,5 +1,7 @@
 <template>
-  <container id="hive">
+  <container
+    id="hive"
+    loaded-on-mounted>
     <div class="hero bg-white">
       <div class="hero-inner">
         <div class="content content-full">

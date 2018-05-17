@@ -7,6 +7,14 @@ Vue.use(Router)
 const is = (type) => (new RegExp('www|api|hive|localhost:8080|localhost:5000')).test(window.location.host.split('.')[0]) === (type !== 'back')
 
 const load = name => resolve => require(['%/' + (is('front') ? 'front/' : 'back/') + (name || 'index')], resolve)
+const error = [{
+  path: '*',
+  component: load('Error'),
+  props: {
+    code: '404'
+  }
+}]
+
 const frontRoutes = [
   {
     path: '/',
@@ -17,13 +25,7 @@ const frontRoutes = [
       { path: 'logout', name: 'logout', component: load('Logout'), meta: { back: { auth: true } } }
     ]
   },
-  {
-    path: '*',
-    component: load('Error'),
-    props: {
-      code: '404'
-    }
-  }
+  ...error
 ]
 
 const backRoutes = [
@@ -47,13 +49,7 @@ const backRoutes = [
       { path: 'logout', name: 'logout', component: load('Logout'), meta: { back: { auth: true } } }
     ]
   },
-  {
-    path: '*',
-    component: load('Error'),
-    props: {
-      code: '404'
-    }
-  }
+  ...error
 ]
 
 const router = new Router({

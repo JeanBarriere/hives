@@ -11,6 +11,7 @@
     header-fixed
     header-glass
     header-inverse
+    loaded-on-mounted
     sidebar-display>
     <template
       slot-scope="template"

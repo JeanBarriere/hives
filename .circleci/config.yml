@@ -16,3 +16,14 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn test
+deployment:
+  staging:
+    branch: development
+    codedeploy:
+      hive:
+        deployment_group: staging-deployment
+  production:
+    branch: master
+    codedeploy:
+      hive:
+        deployment_group: production-deployment

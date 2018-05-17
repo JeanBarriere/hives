@@ -1,6 +1,6 @@
 <template>
   <b-container
-    id="back-auth-signin"
+    id="front-auth"
     class="content content-full">
     <b-row align-h="center">
       <b-col
@@ -9,36 +9,56 @@
         lg="6">
         <block
           ref="signin"
-          :options="[{ tag: 'button', icon: 'question', call: help }, { tag: 'button', icon: 'plus', call: newWorkspace }]"
+          :options="[{ tag: 'button', icon: 'question', call: help }]"
           bordered
           rounded
           header
-          theme="gd-aqua">
-          <template slot="header">Sign in to {{ $workspace }}</template>
+          theme="primary">
+          <template slot="header">{{ isExistingWorkspace ? 'Sign in to' : 'Create' }} {{ getWorkspaceName }}'s workspace</template>
           <template slot="content">
-            <p>Enter your identifiers to log into your workspace:</p>
-            <b-input-group>
-              <b-input
-                id="email"
-                v-model="email"
-                type="email"
-                size="lg"
-                class="mr-5"
-                placeholder="Email" />
-              <b-input
-                id="password"
-                v-model="password"
-                type="password"
-                size="lg"
-                class="mr-5"
-                placeholder="Password" />
-            </b-input-group>
-            <div class="text-center mx-auto mt-20">
-              <b-button
-                variant="alt-primary"
-                size="lg"
-                @click="signin">Sign in</b-button>
-            </div>
+            <b-alert
+              :show="failed"
+              dismissible
+              variant="danger"
+              @dismissed="failed = false">Invalid credentials</b-alert>
+            <b-form @submit.prevent="onSubmit">
+              <b-form-group
+                v-if="!isExistingWorkspace"
+                label="Full name:"
+                label-for="form-name">
+                <b-form-input
+                  id="form-name"
+                  v-model="name"
+                  required
+                  placeholder="John Smith" />
+              </b-form-group>
+              <b-form-group
+                label="Email address:"
+                label-for="form-email">
+                <b-form-input
+                  id="form-email"
+                  v-model="email"
+                  type="email"
+                  required
+                  placeholder="john.smith@hive.tools" />
+              </b-form-group>
+              <b-form-group
+                label="Password:"
+                label-for="form-password">
+                <b-form-input
+                  id="form-password"
+                  v-model="password"
+                  type="password"
+                  required
+                  placeholder="P4$$w0rd" />
+              </b-form-group>
+              <div class="text-center">
+                <b-button
+                  type="submit"
+                  variant="alt-primary"
+                  v-text="isExistingWorkspace ? 'Login' : 'Sign up'" />
+              </div>
+            </b-form>
           </template>
         </block>
       </b-col>
@@ -47,36 +67,51 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'BackAuthSignin',
   data: () => ({
+    name: '',
     email: '',
-    password: ''
+    password: '',
+    failed: false
   }),
+  computed: mapGetters(['isExistingWorkspace', 'getWorkspaceName']),
   mounted: function () {
     this.$container.header({display: true, fixed: false, modern: false, inverse: false, glass: false})
   },
   methods: {
-    ...mapActions(['login']),
-    signin: function () {
-      this.$refs.signin.refresh(() => {
-        return new Promise(resolve => {
-          this.login().then((res) => {
-            console.log(res)
-            resolve()
-            this.$router.push({ path: this.$route.query.redirect || '/' })
-          }).catch((err) => {
-            resolve()
-            console.log(err)
-          })
-        })
+    ...mapActions(['signin', 'signup']),
+    onSubmit: function () {
+      this.failed = false
+      if (this.isExistingWorkspace) {
+        this.onSubmitSignin()
+      } else {
+        this.onSubmitSignup()
+      }
+    },
+    onSubmitSignin: function () {
+      this.signin({ workspace: this.$workspace, email: this.email, password: this.password }).then((res) => {
+        if (this.$route.query.redirect) {
+          this.$router.push(this.$route.query.redirect)
+        } else {
+          this.$router.push({ name: 'dash-home' })
+        }
+      }).catch(() => {
+        this.failed = true
       })
     },
-    newWorkspace: function () {
-      console.log('TODO: redirect to new workspace')
-      this.$router.push('/signup')
+    onSubmitSignup: function () {
+      this.signup({ workspace: this.getWorkspaceName, name: this.name, email: this.email, password: this.password }).then((res) => {
+        if (this.$route.query.redirect) {
+          this.$router.push(this.$route.query.redirect)
+        } else {
+          this.$router.push({ name: 'dash-home' })
+        }
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     help: function () {
       console.log('TODO: help the user')

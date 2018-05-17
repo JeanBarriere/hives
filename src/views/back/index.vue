@@ -1,6 +1,7 @@
 <template>
   <container
     id="hive"
+    ref="hive"
     :footer-author-name="getFrontAuthorName"
     :footer-author-url="getFrontAuthorUrl"
     :footer-name="getFrontFooterName"
@@ -90,10 +91,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'HiveBack',
+  data: () => ({ load: false }),
   computed: mapGetters([
     'getFrontAuthorName',
     'getFrontAuthorUrl',
@@ -108,14 +110,32 @@ export default {
     'isUserLoggedIn'
   ]),
   watch: {
-    '$route': 'watchRoute'
+    '$route': 'watchRoute',
+    load: function (val) {
+      this.$refs.hive.contentLoad(val)
+    }
+  },
+  created: function () {
+    this.initWorkspace().then(this.exist).catch(this.unknown)
+    this.load = true
   },
   methods: {
+    ...mapActions(['initWorkspace', 'initApi']),
     watchRoute: function (to, from) {
       this.$container.sidebar({ openXs: false })
     },
     onSearch: function (query) {
       console.log(query)
+    },
+    exist: function () {
+      console.debug('[Hive][App][Init] Workspace exists')
+      this.initApi().then(() => {
+        this.load = false
+      })
+    },
+    unknown: function () {
+      console.debug('[Hive][App][Init] Workspace unknown')
+      this.load = false
     }
   }
 }
