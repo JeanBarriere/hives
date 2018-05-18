@@ -54,14 +54,9 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/node:latest
       - image: cibuilds/aws
     working_directory: ~/hive
     steps:
-      - restore_cache:
-          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-      - restore_cache:
-          key: v1-dependencies-{{ checksum "package.json" }}
       - restore_cache:
           key: v1-dist-{{ .Environment.CIRCLE_SHA1 }}
       - run:
