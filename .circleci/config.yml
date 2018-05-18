@@ -17,9 +17,9 @@ jobs:
     working_directory: ~/hive
     steps:
       - restore_cache:
-          keys:
-            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "package.json" }}
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn install
       - save_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
@@ -32,9 +32,9 @@ jobs:
     working_directory: ~/hive
     steps:
       - restore_cache:
-          keys:
-            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "package.json" }}
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn build
       - save_cache:
           key: v1-dist-{{ .Environment.CIRCLE_SHA1 }}
@@ -47,9 +47,9 @@ jobs:
     working_directory: ~/hive
     steps:
       - restore_cache:
-          keys:
-            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "package.json" }}
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn test
 
   deploy:
@@ -58,10 +58,11 @@ jobs:
     working_directory: ~/hive
     steps:
       - restore_cache:
-          keys:
-            - v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dist-{{ .Environment.CIRCLE_SHA1 }}
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - restore_cache:
+          key: v1-dist-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Deploy to S3
           command: aws s3 sync dist s3://hives-front --delete
