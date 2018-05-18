@@ -55,6 +55,7 @@ jobs:
   deploy:
     docker:
       - image: circleci/node:latest
+      - image: cibuilds/aws
     working_directory: ~/hive
     steps:
       - restore_cache:
