@@ -42,6 +42,7 @@ const backRoutes = [
           { path: 'users', name: 'dash-users', component: load('Dash/Users'), meta: { back: { auth: true } } },
           { path: 'fleet', name: 'dash-fleet', component: load('Dash/Fleet'), meta: { back: { auth: true } } },
           { path: 'stops', name: 'dash-stops', component: load('Dash/Stops'), meta: { back: { auth: true } } },
+          { path: 'directions', name: 'dash-directions', component: load('Dash/Directions'), meta: { back: { auth: true } } },
           { path: 'map', name: 'dash-map', component: load('Dash/Map'), meta: { back: { auth: true } } }
         ]
       },
