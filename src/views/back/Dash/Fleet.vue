@@ -122,7 +122,134 @@
         </block>
       </div>
       <div class="col-lg-12 col-xl-6">
+        <b-modal
+          v-model="addVehicleModal"
+          centered
+          title="Add a vehicle"
+          @ok="okVehicleModal"
+          @shown="clearVehicleModal">
+          <b-form @submit.stop.prevent="submitVehicleModal">
+            <b-form-group
+              label="Name:"
+              label-for="form-vehicle-name">
+              <b-form-input
+                id="form-vehicle-name"
+                v-model="vehicle.name"
+                required
+                placeholder="Name" />
+            </b-form-group>
+            <b-form-group
+              label="Immatriculation:"
+              label-for="form-vehicle-immatriculation">
+              <b-form-input
+                id="form-vehicle-immatriculation"
+                v-model="vehicle.immatriculation"
+                required
+                placeholder="11-CC00-Z1" />
+            </b-form-group>
+            <b-form-group
+              label="Brand:"
+              label-for="form-vehicle-brand">
+              <b-form-input
+                id="form-vehicle-brand"
+                v-model="vehicle.brand"
+                required
+                placeholder="Nissan" />
+            </b-form-group>
+            <b-form-group
+              label="Model:"
+              label-for="form-vehicle-model">
+              <b-form-input
+                id="form-vehicle-model"
+                v-model="vehicle.model"
+                required
+                placeholder="Corola" />
+            </b-form-group>
+            <b-form-group
+              label="Color:"
+              label-for="form-vehicle-color">
+              <b-form-input
+                id="form-vehicle-color"
+                v-model="vehicle.color"
+                required
+                placeholder="Black" />
+            </b-form-group>
+            <b-form-group
+              label="Space:"
+              label-for="form-vehicle-space">
+              <b-form-input
+                id="form-vehicle-space"
+                v-model.number="vehicle.space"
+                type="number"
+                required
+                placeholder="Space" />
+            </b-form-group>
+          </b-form>
+        </b-modal>
+        <b-modal
+          v-if="currentVehicle"
+          v-model="viewVehicleModal"
+          :title="`${currentVehicle.name} - Preview`"
+          centered
+          ok-only>
+          <b-form-group
+            label="Name:"
+            label-for="form-vehicle-name">
+            <b-form-input
+              id="form-vehicle-name"
+              v-model="currentVehicle.name"
+              required
+              readonly />
+          </b-form-group>
+          <b-form-group
+            label="Immatriculation:"
+            label-for="form-vehicle-immatriculation">
+            <b-form-input
+              id="form-vehicle-immatriculation"
+              v-model="currentVehicle.immatriculation"
+              required
+              readonly />
+          </b-form-group>
+          <b-form-group
+            label="Brand:"
+            label-for="form-vehicle-brand">
+            <b-form-input
+              id="form-vehicle-brand"
+              v-model="currentVehicle.brand"
+              required
+              readonly />
+          </b-form-group>
+          <b-form-group
+            label="Model:"
+            label-for="form-vehicle-model">
+            <b-form-input
+              id="form-vehicle-model"
+              v-model="currentVehicle.model"
+              required
+              readonly />
+          </b-form-group>
+          <b-form-group
+            label="Color:"
+            label-for="form-vehicle-color">
+            <b-form-input
+              id="form-vehicle-color"
+              v-model="currentVehicle.color"
+              required
+              readonly />
+          </b-form-group>
+          <b-form-group
+            label="Space:"
+            label-for="form-vehicle-space">
+            <b-form-input
+              id="form-vehicle-space"
+              v-model.number="currentVehicle.space"
+              type="number"
+              required
+              readonly />
+          </b-form-group>
+        </b-modal>
         <block
+          :options="[{ tag: 'button', icon: 'plus', call: () => addVehicleModal = true }]"
           bordered
           header
           rounded>
@@ -137,7 +264,6 @@
                     <i class="si si-tag" />
                   </th>
                   <th>Name</th>
-                  <th class="d-none d-sm-table-cell">Driver</th>
                   <th
                     class="text-center"
                     style="width: 100px;">Actions</th>
@@ -145,24 +271,30 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(item, index) of vehicles"
-                  :key="'vehicle-' + index">
+                  v-for="vehicle of getVehicles"
+                  :key="'vehicle-' + vehicle.ID">
                   <td
                     class="font-w600 d-none d-md-table-cell text-center"
-                    v-text="'#' + Math.floor(Math.random() * 900000 + 100000)" />
-                  <td v-text="item" />
-                  <td class="d-none d-sm-table-cell">John Smith</td>
+                    v-text="'#' + vehicle.ID" />
+                  <td v-text="vehicle.name" />
                   <td class="text-center">
                     <div class="btn-group">
                       <button
                         type="button"
-                        class="btn btn-sm btn-alt-secondary">
+                        class="btn btn-sm btn-alt-secondary"
+                        @click="viewVehicle(vehicle)">
+                        <i class="si si-eye" />
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-alt-secondary"
+                        @click="editVehicle(vehicle)">
                         <i class="si si-pencil" />
                       </button>
                       <button
                         type="button"
                         class="btn btn-sm btn-alt-danger"
-                        @click="vehicles.splice(index, 1)">
+                        @click="removeVehicle(vehicle)">
                         <i class="si si-close" />
                       </button>
                     </div>
@@ -186,6 +318,7 @@ export default {
   data: () => ({
     vehicles: ['Toyota 1', 'Toyota 2', 'Toyota 3', 'Toyota 4'],
     addWarehouseModal: false,
+    addVehicleModal: false,
     search: 'Singapore',
     location: {
       lat: 1.352083,
@@ -196,19 +329,36 @@ export default {
       longitude: undefined,
       name: ''
     },
+    vehicle: {
+      name: '',
+      immatriculation: '',
+      brand: '',
+      space: 1,
+      model: '',
+      color: ''
+    },
     currentWarehouse: null,
-    viewWarehouseModal: false
+    currentVehicle: null,
+    viewVehicleModal: false
   }),
-  computed: mapGetters(['getWarehouses']),
+  computed: mapGetters(['getWarehouses', 'getVehicles']),
   mounted: function () {
     this.updateWarehouses()
+    this.updateVehicles()
   },
   methods: {
-    ...mapActions(['updateWarehouses', 'removeWarehouse', 'addWarehouse']),
+    ...mapActions(['updateWarehouses', 'removeWarehouse', 'addWarehouse', 'updateVehicles', 'removeVehicle', 'addVehicle']),
     okWarehouseModal: function (event) {
       event.preventDefault()
       if (this.warehouse.name.trim().length > 0) {
         this.submitWarehouseModal()
+      }
+    },
+    okVehicleModal: function (event) {
+      event.preventDefault()
+      if (this.vehicle.name.trim().length > 0 && this.vehicle.immatriculation.trim().length > 0 &&
+          this.vehicle.brand.trim().length > 0 && this.vehicle.model.trim().length > 0 && this.vehicle.color.trim().length > 0) {
+        this.submitVehicleModal()
       }
     },
     setPlace: function (place) {
@@ -227,7 +377,7 @@ export default {
       })
     },
     clearWarehouseModal: function () {
-      this.warehouse = { name: '' }
+      this.warehouse = { name: '', latitude: undefined, longitude: undefined }
     },
     viewWarehouse: function (warehouse) {
       this.currentWarehouse = warehouse
@@ -236,22 +386,25 @@ export default {
     editWarehouse: function (warehouse) {
       // this.currentWarehouse = warehouse
       // this.editWarehouseModal = true
+    },
+    submitVehicleModal: function () {
+      this.addVehicle(this.vehicle).then(() => {
+        this.addVehicleModal = false
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    clearVehicleModal: function () {
+      this.vehicle = { name: '', immatriculation: '', brand: '', space: 1, model: '', color: '' }
+    },
+    viewVehicle: function (vehicle) {
+      this.currentVehicle = vehicle
+      this.viewVehicleModal = true
+    },
+    editVehicle: function (vehicle) {
+      // this.currentVehicle = vehicle
+      // this.editVehicleModal = true
     }
   }
 }
 </script>
-
-<style lang="sass">
-  .pac-container
-    z-index: 1060
-  .vue-map-container
-    width: 100%
-    height: 100%
-    border: 1px solid #dcdfe3
-    border-radius: 0.25rem
-    overflow: hidden
-    &.medium
-      height: 300px
-    &.large
-      height: 400px
-</style>

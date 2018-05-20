@@ -61,7 +61,7 @@ jobs:
           key: v1-dist-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Deploy to S3
-          command: aws s3 sync /home/circleci/hive/dist s3://hives-front --delete
+          command: aws s3 sync /home/circleci/hive/dist s3://hives-front --delete --acl public-read
       - run:
           name: Invalidate cache
           command: aws cloudfront create-invalidation --distribution-id ET6VOPK1D013Y --paths /

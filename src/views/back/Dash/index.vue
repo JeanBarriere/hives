@@ -21,3 +21,18 @@ export default {
   }
 }
 </script>
+
+<style lang="sass">
+  .pac-container
+    z-index: 1060
+  .vue-map-container
+    width: 100%
+    height: 100%
+    border: 1px solid #dcdfe3
+    border-radius: 0.25rem
+    overflow: hidden
+    &.medium
+      height: 300px
+    &.large
+      height: 400px
+</style>
