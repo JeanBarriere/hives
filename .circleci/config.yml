@@ -35,7 +35,11 @@ jobs:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - restore_cache:
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: yarn build
+      - run:
+          name: Build app
+          command: yarn build
+          environment:
+              GOOGLE_MAPS_API_KEY: {{ .Environment.GOOGLE_MAPS_API_KEY }}
       - save_cache:
           key: v1-dist-{{ .Environment.CIRCLE_SHA1 }}
           paths:
