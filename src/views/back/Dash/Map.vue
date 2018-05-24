@@ -2,11 +2,12 @@
   <div id="back-dash-map">
     <div class="row">
       <div class="col-12">
-        <block
-          bordered
-          rounded>
-          This is the map page
-        </block>
+        <gmap-map
+          id="dash-map-map"
+          :center="location"
+          :zoom="11"
+          :options="{ streetViewControl: false, fullscreenControl: false, mapTypeControl: false }"
+          class="screen" />
       </div>
     </div>
   </div>
@@ -14,6 +15,7 @@
 
 <script>
 export default {
-  name: 'BackDashMap'
+  name: 'BackDashMap',
+  data: () => ({ location: { lat: 1.352083, lng: 103.81983600000001 } })
 }
 </script>

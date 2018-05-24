@@ -11,6 +11,6 @@ export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   plugins: [createPersistedState({
     key: 'hive',
-    paths: ['User', 'Warehouses']
+    paths: ['User', 'Warehouses', 'Vehicles', 'Products', 'Stops', 'Orders']
   })]
 })

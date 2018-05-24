@@ -10,7 +10,7 @@ export class ApiService {
   }
 
   static create (host = process.env.API_HOST, headers = {}) {
-    console.debug('[Hive][Service][Api] ApiService::create')
+    console.debug('[Hive][Service][Api] ApiService::create', host)
     return axios.create({
       baseURL: host,
       timeout: 30000,

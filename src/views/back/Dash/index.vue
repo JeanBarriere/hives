@@ -35,4 +35,6 @@ export default {
       height: 300px
     &.large
       height: 400px
+    &.screen
+      height: calc(100vh - 237px)
 </style>

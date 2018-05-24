@@ -8,6 +8,12 @@ const state = {
 const getters = {
   getStops (state) {
     return state.stops
+  },
+  getStopById: state => id => {
+    return state.stops.find(s => s.ID === id)
+  },
+  getStopsAsOptions (state) {
+    return state.stops.map(s => ({ text: s.Name, value: s.ID }))
   }
 }
 

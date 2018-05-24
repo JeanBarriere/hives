@@ -63,9 +63,31 @@ const state = {
     {
       name: 'Directions',
       route: {
-        path: '/directions'
+        name: 'dash-directions'
       },
       icon: 'directions',
+      privateOnly: true,
+      left: true
+    },
+    {
+      name: 'Marketplace',
+      head: true
+    },
+    {
+      name: 'Orders',
+      route: {
+        name: 'dash-orders'
+      },
+      icon: 'drawer',
+      privateOnly: true,
+      left: true
+    },
+    {
+      name: 'Products',
+      route: {
+        name: 'dash-products'
+      },
+      icon: 'puzzle',
       privateOnly: true,
       left: true
     },
