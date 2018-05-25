@@ -60,7 +60,7 @@
             label-for="form-product-identifier">
             <b-form-input
               id="form-product-identifier"
-              v-model="currentProduct.identifier"
+              v-model="currentProduct.Identifier"
               readonly
               required
               placeholder="Identifier" />

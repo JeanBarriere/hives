@@ -247,6 +247,21 @@
               required
               readonly />
           </b-form-group>
+          <b-form-group
+            label="Warehouse:"
+            label-for="form-vehicle-warehouse">
+            <b-form-select
+              id="form-vehicle-warehouse"
+              v-model="warehouseID"
+              :options="getWarehousesAsOptions"
+              required>
+              <template slot="first">
+                <option
+                  :value="null"
+                  disabled>Select a warehouse</option>
+              </template>
+            </b-form-select>
+          </b-form-group>
         </b-modal>
         <block
           :options="[{ tag: 'button', icon: 'plus', call: () => addVehicleModal = true }]"
@@ -338,16 +353,22 @@ export default {
       color: ''
     },
     currentWarehouse: null,
+    warehouseID: null,
     currentVehicle: null,
     viewVehicleModal: false
   }),
-  computed: mapGetters(['getWarehouses', 'getVehicles']),
+  computed: mapGetters(['getWarehouses', 'getVehicles', 'getWarehousesAsOptions']),
+  watch: {
+    warehouseID: function (val) {
+      this.linkVehicleToWarehouse({ vehicleID: this.currentVehicle.ID, warehouseID: this.warehouseID })
+    }
+  },
   mounted: function () {
     this.updateWarehouses()
     this.updateVehicles()
   },
   methods: {
-    ...mapActions(['updateWarehouses', 'removeWarehouse', 'addWarehouse', 'updateVehicles', 'removeVehicle', 'addVehicle']),
+    ...mapActions(['updateWarehouses', 'removeWarehouse', 'addWarehouse', 'updateVehicles', 'removeVehicle', 'addVehicle', 'linkVehicleToWarehouse']),
     okWarehouseModal: function (event) {
       event.preventDefault()
       if (this.warehouse.name.trim().length > 0) {
@@ -399,6 +420,7 @@ export default {
     },
     viewVehicle: function (vehicle) {
       this.currentVehicle = vehicle
+      this.warehouseID = this.currentVehicle.Warehouse.ID
       this.viewVehicleModal = true
     },
     editVehicle: function (vehicle) {

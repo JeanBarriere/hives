@@ -8,6 +8,9 @@ const state = {
 const getters = {
   getWarehouses (state) {
     return state.warehouses
+  },
+  getWarehousesAsOptions (state) {
+    return state.warehouses.map(w => ({ text: w.Name, value: w.ID }))
   }
 }
 

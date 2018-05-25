@@ -12,23 +12,21 @@
             v-for="(vehicle, vIndex) of currentRoutes.Result"
             :key="'direction-' + currentRoutes.id + '-vehicle-' + vIndex"
             class="mb-20">
-            <div v-text="'ID: ' + vehicle.DriverID" />
-            <div v-text="'Immatriculation: ' + vehicle.Immatriculation" />
-            <div v-text="'Brand: ' + vehicle.Brand" />
-            <div v-text="'Model: ' + vehicle.Model" />
-            <div v-text="'Color: ' + vehicle.Color" />
+            <div v-text="'Vehicle: ' + vehicle.Immatriculation + ' (' + vehicle.Brand + ' - ' + vehicle.CarModel + ' - ' + vehicle.Color + ')'" />
             <div
               v-for="(stop, sIndex) of vehicle.Stops"
               :key="'direction-' + currentRoutes.id + '-vehicle-' + vIndex + '-stop-' + sIndex">
-              <div>[STOP#{{ sIndex }}]Name: {{ stop.Name }}</div>
-              <div>[STOP#{{ sIndex }}]LatLng: {{ stop.Lat }}-{{ stop.Long }}</div>
-              <div>[STOP#{{ sIndex }}]Address: {{ stop.Address }}</div>
-              <template v-if="stop.Products">
-                <div
-                  v-for="(product, pIndex) of stop.Products"
-                  :key="'direction-' + currentRoutes.id + '-vehicle-' + vIndex + '-stop-' + sIndex + '-product-' + pIndex">[STOP#{{ sIndex }}]Product #{{ idx }}: {{ product }}</div>
-              </template>
-              <div v-else>[STOP#{{ sIndex }}]No products</div>
+              <div>Delivering to {{ stop.Name }} :
+                <template v-if="stop.Products">
+                  <span
+                    v-for="(product, pIndex) of stop.Products"
+                    :key="'direction-' + currentRoutes.id + '-vehicle-' + vIndex + '-stop-' + sIndex + '-product-' + pIndex"
+                    class="badge badge-info">{{ product.Name }} x{{ product.Quantity }}</span>
+                </template>
+                <span
+                  v-else
+                  class="badge badge-danger">No products</span>
+              </div>
             </div>
           </div>
         </b-modal>
@@ -110,7 +108,7 @@ export default {
   computed: {
     ...mapGetters(['getDirections']),
     getDirectionsSorted: function () {
-      return this.getDirections.slice(0).sort((a, b) => a.ID < b.ID)
+      return this.getDirections.slice(0).sort((a, b) => b.ID - a.ID)
     }
   },
   mounted: function () {

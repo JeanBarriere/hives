@@ -14,16 +14,22 @@ const getters = {
 const mutations = {
   pushVehicle (state, vehicle) {
     if (vehicle) {
-      if (state.vehicles.findIndex(e => e.ID === vehicle.ID) === -1) {
+      let idx = state.vehicles.findIndex(e => e.ID === vehicle.ID)
+      if (idx === -1) {
         state.vehicles.push(vehicle)
+      } else {
+        state.vehicles.splice(idx, 1, vehicle)
       }
     }
   },
   pushVehicles (state, vehicles) {
     if (vehicles) {
       for (let vehicle of vehicles) {
-        if (state.vehicles.findIndex(e => e.ID === vehicle.ID) === -1) {
+        let idx = state.vehicles.findIndex(e => e.ID === vehicle.ID)
+        if (idx === -1) {
           state.vehicles.push(vehicle)
+        } else {
+          state.vehicles.splice(idx, 1, vehicle)
         }
       }
     }
@@ -55,9 +61,17 @@ const actions = {
       }).catch(reject)
     })
   },
+  linkVehicleToWarehouse ({ commit, state }, payload) {
+    return new Promise((resolve, reject) => {
+      Vue.api.post(`truck/${payload.vehicleID}/join`, { warehouse_id: payload.warehouseID }).then((res) => {
+        commit('pushVehicle', res.data)
+        resolve(state.vehicles)
+      }).catch(reject)
+    })
+  },
   removeVehicle ({ commit, state }, vehicle) {
     return new Promise((resolve, reject) => {
-      Vue.api.delete(`vehicle/${vehicle.ID}`).then((res) => {
+      Vue.api.delete(`truck/${vehicle.ID}`).then((res) => {
         commit('spliceVehicle', vehicle)
         resolve()
       }).catch(reject)

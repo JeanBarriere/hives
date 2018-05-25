@@ -73,7 +73,7 @@ export default {
   name: 'BackDashUsers',
   data: () => ({
     users: [
-      { name: 'John Smith', email: 'john.smith@example.com', role: 'Administrator', roleBadge: 'danger' },
+      { name: 'Jean Barriere', email: 'jean@barriere.io', role: 'Administrator', roleBadge: 'danger' },
       { name: 'Henry Jackson', email: 'henry.jackson@hello.app', role: 'Manager', roleBadge: 'info' },
       { name: 'Ryan Helwis', email: 'ryan.helwis@gmail.com', role: 'Manager', roleBadge: 'info' }
     ]
